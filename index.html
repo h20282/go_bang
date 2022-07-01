@@ -1,0 +1,92 @@
+<html>
+<canvas id='board'
+    style='background-color: rgb(245, 203, 105); box-shadow: -2px -2px 2px #efefef, 5px 5px 5px #b9b9b9;'></canvas>
+<script>
+    const board = document.getElementById('board');
+
+    const size = 17;
+    const width = size * 35 + 10 * 2;
+    const height = width;
+    const radius = 13;
+    const padding = 15;
+    const blank = (width - padding * 2) / (size - 1);
+
+    board.width = width;
+    board.height = height;
+
+    function DrawLine(startx, starty, endx, endy, color) {
+        var ctx = board.getContext('2d');
+        if (color) {
+            ctx.strokeStyle = color;
+        }
+        ctx.moveTo(startx, starty);
+        ctx.lineTo(endx, endy);
+        ctx.stroke();
+    }
+
+    function DrwaCell(x, y) {
+        var ctx = board.getContext('2d');
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);// 画圆
+        ctx.closePath();
+        var gradient = ctx.createRadialGradient(x, y, radius, x, y, 0);
+        var me = true;
+        if (me) {
+            gradient.addColorStop(0, '#0a0a0a');
+            gradient.addColorStop(1, '#636766');
+        } else {
+            gradient.addColorStop(0, '#d1d1d1');
+            gradient.addColorStop(1, '#f9f9f9');
+        }
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        ctx.stroke();
+    }
+
+    function ToCellXY(v) {
+        return Math.round((v - padding) / blank);
+    }
+
+    function ToBoardXY(v) {
+        return v * blank + padding;
+    }
+
+    function DrawBoard() {
+        const w = size;
+        const h = size;
+
+
+        color = 'rgb(197, 138, 0)';
+        // v
+        for (line = 0; line < h; line++) {
+            // (0, line) - (size-1, line);
+            startx = ToBoardXY(0);
+            starty = ToBoardXY(line);
+            endx = ToBoardXY(size - 1);
+            endy = starty;
+            DrawLine(startx, starty, endx, endy, color);
+        }
+        // h
+        for (col = 0; col < w; col++) {
+            // (col, 0) - (col, size-1)
+            startx = ToBoardXY(col);
+            starty = ToBoardXY(0);
+            endx = startx;
+            endy = ToBoardXY(size - 1);
+            DrawLine(startx, starty, endx, endy, color);
+        }
+    }
+
+    board.onclick = function (e) {
+        console.log(e.offsetX, e.offsetY);
+    }
+    board.onmousemove = function (e) {
+        var x = ToCellXY(e.offsetX);
+        var y = ToCellXY(e.offsetY);
+        DrwaCell(ToBoardXY(x), ToBoardXY(y));
+    }
+
+    DrawBoard();
+</script>
+
+</html>
